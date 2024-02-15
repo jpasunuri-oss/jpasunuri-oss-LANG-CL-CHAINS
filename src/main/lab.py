@@ -1,8 +1,11 @@
 import os
+from dotenv import load_dotenv
 
 from langchain.chains import LLMChain
 from langchain_community.llms.huggingface_endpoint import HuggingFaceEndpoint
 from langchain_core.prompts import PromptTemplate
+
+load_dotenv()
 
 """
 Next, we will be working on producing LLM chains. A RAG application will feature multiple
@@ -16,6 +19,7 @@ https://python.langchain.com/docs/modules/chains/foundational/llm_chain
 """
 llm = HuggingFaceEndpoint(
     endpoint_url=os.environ['LLM_ENDPOINT'],
+    huggingfacehub_api_token=os.environ['HF_TOKEN'],
     task="text2text-generation",
     model_kwargs={
         "max_new_tokens": 200
@@ -34,8 +38,9 @@ def sample(user_input):
 TODO: create a complimentary LLMChain that will talk about music, and will refuse all other prompt attempts.
 Test cases will verify if the resulting message only creates relevant music responses.
 """
-prompt2 = None
-music_chain = None
+prompt2 = ("You are a language model that will talk about music, and will refuse other prompts. "
+           "Talk about: {user_input}")
+music_chain = LLMChain(llm=llm, prompt=PromptTemplate.from_template(prompt2))
 
 
 def lab(user_input):
